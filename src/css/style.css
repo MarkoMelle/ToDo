@@ -7,7 +7,7 @@
 body {
    margin: 0;
    padding: 0;
-
+   max-width: 100%;
    background-color: #5d576b;
 
    font-family: 'Roboto', sans-serif;
@@ -23,7 +23,7 @@ body {
 }
 
 .lists {
-   margin: auto;
+   margin: 20vh auto;
    display: flex;
    flex-wrap: wrap;
    gap: 5%;
@@ -46,7 +46,7 @@ body {
    box-shadow: 13px 12px 22px 2px rgba(0, 0, 0, 0.33);
    /* flex: 1 1; */
    /* min-width: 15%; */
-   width: 30%;
+   width: 20%;
 }
 
 .list-title {
@@ -66,6 +66,7 @@ body {
    border-radius: 10px;
    padding: 10px;
    flex-grow: 1;
+   word-wrap: break-word;
 }
 
 .list-item:hover {
@@ -73,8 +74,36 @@ body {
    color: #fff;
 }
 
+.list-item--dragged {
+   position: absolute;
+   z-index: 1000;
+}
+
+.list-item--dragged:hover {
+
+   background-color: #fff;
+   color: #000;
+}
+
+.overlap {
+   color: transparent;
+}
+
+.overlap:hover {
+   color: transparent;
+   background-color: #fff;
+}
+
+li {
+   list-style: none;
+}
+
 .input {
-   resize: none;
+   /* resize: none; */
+   min-width: 100%;
+   min-height: 45px;
+   height: auto;
+   max-height: 150px;
    border: 2px solid #FF8811;
    max-width: 100%;
    border-radius: 10px;
@@ -82,7 +111,7 @@ body {
 }
 
 .input:focus-visible {
-   border: 2px solid rgb(250, 127, 5);
+   outline: 2px solid rgb(250, 127, 5);
    outline: none;
    box-shadow: 0px 0px 10px 1px rgba(250, 127, 5, 0.48);
 }
@@ -99,6 +128,12 @@ body {
 
 .btn:hover {
    background-color: #fa7f05;
+}
+
+.btn:focus,
+.btn:focus-visible {
+   outline: none;
+   box-shadow: 0px 0px 10px 1px rgba(250, 127, 5, 0.48);
 }
 
 .add-form {

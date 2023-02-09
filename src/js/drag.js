@@ -1,37 +1,88 @@
-const items = document.querySelector('.items');
 
-const itemsElements = document.querySelector('.items-item');
-
-let activeItem;
-
-const onMouseOver = (e) => {
-  activeItem.style.top = e.clientY + 'px';
-  activeItem.style.left = e.clientX + 'px';
-}
-
-
-const onMouseup = (e) => {
-  let mouseUpItem
-  if (e.target.classList.contains('items-item')) {
-    mouseUpItem = e.target;
-  } else {
-    mouseUpItem = activeItem
+export default class DragDrop {
+  constructor(cards) {
+    this.cards = cards
   }
-  items.insertBefore(activeItem, mouseUpItem)
+  overlap
+  addListeners(...args) {
+    args.forEach((item) => {
+      item.addEventListener('mousedown', (event) => {
+        if(event.target.closest('img')) {
+          return;
+        }
+        const oldPosition = item.cloneNode(true)
+        const newPosition = item.cloneNode(true)
+        oldPosition.classList.add('overlap');
+        newPosition.classList.add('overlap');
 
-  activeItem.classList.remove('dragged');
-  activeItem = null;
-  document.documentElement.removeEventListener('mouseup', onMouseup);
-  document.documentElement.removeEventListener('mouseover', onMouseOver);
+
+        let shiftX = event.clientX - item.getBoundingClientRect().left;
+        let shiftY = event.clientY - item.getBoundingClientRect().top;
+        let itemWidth = item.offsetWidth;
+        item.before(oldPosition);
+
+        item.classList.add('list-item--dragged');
+        document.body.append(item);
+
+        moveAt(event.pageX, event.pageY);
+
+        function moveAt(pageX, pageY) {
+          item.style.left = pageX - shiftX + 'px';
+          item.style.top = pageY - shiftY + 'px';
+          item.style.width = itemWidth + 'px';
+        }
+
+        let currentDroppable = null;
+        let isMoved = false;
+
+
+        function onMouseMove(event) {
+          moveAt(event.pageX, event.pageY);
+
+          item.hidden = true;
+          let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+          item.hidden = false;
+
+          if (!elemBelow) return;
+
+          let droppableBelow = elemBelow.closest('.list');
+
+          if (currentDroppable != droppableBelow) {
+            if (currentDroppable) {
+              isMoved = false;
+            }
+            currentDroppable = droppableBelow;
+            if (currentDroppable) {
+              isMoved = true;
+              droppableBelow.append(newPosition);
+            }
+          }
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        item.onmouseup = function () {
+          if (!isMoved) {
+            item.style = false;
+            item.classList.remove('list-item--dragged');
+            oldPosition.replaceWith(item);
+          } else {
+            item.style = false;
+            item.classList.remove('list-item--dragged');
+            newPosition.replaceWith(item);
+            oldPosition.remove()
+          }
+
+          document.removeEventListener('mousemove', onMouseMove);
+          item.onmouseup = null;
+        };
+
+
+      });
+      item.ondragstart = (e) => {
+        return false;
+      }
+    })
+  }
 }
 
-
-
-items.addEventListener('mousedown', (e) => {
-  e.preventDefault();
-  activeItem = e.target;
-  activeItem.classList.add('dragged');
-
-  document.documentElement.addEventListener('mouseup', onMouseup);
-  document.documentElement.addEventListener('mousemove', onMouseOver);
-})
