@@ -1,14 +1,15 @@
 import CardList from "./cardList";
-import DragDrop from "./drag";
+// import DragDrop from "./drag";
 
 // const cardList = new CardList();
+// cardList.init()
 const cards = [];
 document.querySelectorAll('.list-container').forEach(card => {
    cards.push(new CardList(card));
 })
 
-const items = Array.from(document.querySelectorAll('.list-item'))
+// const items = Array.from(document.querySelectorAll('.list-item'))
 
-const dragDrop = new DragDrop(cards);
+// const dragDrop = new DragDrop(cards);
 
-dragDrop.addListeners(...items );
+// dragDrop.addListeners(...items);

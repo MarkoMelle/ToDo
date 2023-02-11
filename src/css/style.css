@@ -44,8 +44,6 @@ body {
    -webkit-box-shadow: 13px 12px 22px 2px rgba(0, 0, 0, 0.33);
    -moz-box-shadow: 13px 12px 22px 2px rgba(0, 0, 0, 0.33);
    box-shadow: 13px 12px 22px 2px rgba(0, 0, 0, 0.33);
-   /* flex: 1 1; */
-   /* min-width: 15%; */
    width: 20%;
 }
 
@@ -56,22 +54,54 @@ body {
 .list {
    display: flex;
    flex-direction: column;
-   gap: 10px;
+   /* gap: 10px; */
 
 }
 
 .list-item {
+   min-height: 40px;
    position: relative;
    background-color: #fff;
    border-radius: 10px;
    padding: 10px;
    flex-grow: 1;
    word-wrap: break-word;
+   margin-bottom: 10px;
 }
 
 .list-item:hover {
    background-color: #4A8FE7;
    color: #fff;
+}
+
+/* textarea.list-item__text {
+   resize: none;
+   background: red;
+   height: 100px;
+   max-height: 150px;
+} */
+
+.list-item__text {
+   -webkit-touch-callout: none; 
+   -webkit-user-select: none;  
+   -khtml-user-select: none;    
+   -moz-user-select: none;      
+   -ms-user-select: none;       
+   user-select: none;   
+   width: 100%;
+   max-width: 100%;
+}
+
+textarea.list-item__text {
+   height: 100px;
+}
+
+.list-item__text:focus-visible {
+   outline: none;
+}
+
+.list-item__text::target-text {
+   border: 1px solid #000;
 }
 
 .list-item--dragged {
@@ -80,12 +110,16 @@ body {
 }
 
 .list-item--dragged:hover {
-
    background-color: #fff;
    color: #000;
 }
 
+.oldPosition {
+   display: none;
+}
+
 .overlap {
+   background-color: #d2d2d2;
    color: transparent;
 }
 
@@ -127,7 +161,7 @@ li {
 
 
 .btn:hover {
-   background-color: #fa7f05;
+   background-color: #e27303;
 }
 
 .btn:focus,
@@ -160,6 +194,18 @@ li {
    width: 20px;
 }
 
-.list-item:hover .delete-item {
+.edit-item {
+   position: absolute;
+   right: 25px;
+   top: 4px;
+   display: none;
+   width: 15px;
+}
+
+.list-item:hover .delete-item{
+   display: block;
+}
+
+.list-item:hover .edit-item{
    display: block;
 }
