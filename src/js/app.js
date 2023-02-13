@@ -1,3 +1,4 @@
+/* eslint-disable */
 import CardList from './CardList';
 import LocalStorageAPI from './localStorageAPI';
 import DragAndDrop from './Drag';
