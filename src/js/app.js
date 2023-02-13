@@ -1,7 +1,7 @@
-/* eslint-disable */
-import CardList from './CardList';
+
+import CardList from './cardList';
 import LocalStorageAPI from './localStorageAPI';
-import DragAndDrop from './Drag';
+import DragAndDrop from './drag';
 
 const cards = [];
 let currentId = 0;
