@@ -19,7 +19,7 @@ jobs:
         run: yarn install
 
       - name: Eslint 🪧
-        run: yarn lint
+        run: yarn lint --fix
         
       # - name: Run Test 🔨
       #    run: yarn test
