@@ -1,11 +1,11 @@
-
-import LocalStorageAPI from "./localStorageAPI";
-
+/* eslint-disable max-len */
+/* eslint no-param-reassign: ["error", { "props": false }] */
 export default class DragAndDrop {
   constructor(cards) {
     this.cards = cards;
     this.isOutItem = false;
   }
+
   /**
    * Описывает всю логику перетаскивания карточки
    */
@@ -14,34 +14,38 @@ export default class DragAndDrop {
       return;
     }
     /**
-     * Запрещаем выделение текста во время перетаскивания карточки
-     */
-    document.documentElement.setAttribute('onselectstart', "return false")
-    /**
      * Исключаем перетаскивание вложенных элементов
      */
     const listItem = event.target.closest('.list-item');
+    if (listItem.querySelector('textarea')) {
+      return;
+    }
+    /**
+     * Запрещаем выделение текста во время перетаскивания карточки
+     */
+    document.documentElement.setAttribute('onselectstart', 'return false');
+
     listItem.style.cursor = 'grabbing';
 
     /**
      * Фиксируем старую позицию карточки
-     * 
+     *
      * Делаем клон карточки для отображения
      * предполагаемого места
      */
-    const oldPosition = listItem.cloneNode(true)
+    const oldPosition = listItem.cloneNode(true);
     oldPosition.textContent = '';
     oldPosition.classList.add('hidden');
     listItem.parentNode.insertBefore(oldPosition, listItem);
-    const newPosition = listItem.cloneNode(true)
+    const newPosition = listItem.cloneNode(true);
     newPosition.classList.add('overlap');
 
     /**
      * Фиксируем положение курсора относительно карточки
      */
-    let shiftX = event.clientX - listItem.getBoundingClientRect().left;
-    let shiftY = event.clientY - listItem.getBoundingClientRect().top;
-    let itemWidth = listItem.offsetWidth;
+    const shiftX = event.clientX - listItem.getBoundingClientRect().left;
+    const shiftY = event.clientY - listItem.getBoundingClientRect().top;
+    const itemWidth = listItem.offsetWidth;
 
     /**
     * Переносим карточку в body
@@ -50,16 +54,15 @@ export default class DragAndDrop {
     document.body.append(listItem);
     oldPosition.parentNode.insertBefore(newPosition, oldPosition);
 
-    moveAt(event.pageX, event.pageY);
-
     /**
      * Логика передвижения по viewport
      */
     function moveAt(pageX, pageY) {
-      listItem.style.left = pageX - shiftX + 'px';
-      listItem.style.top = pageY - shiftY + 'px';
-      listItem.style.width = itemWidth + 'px';
+      listItem.style.left = `${pageX - shiftX}px`;
+      listItem.style.top = `${pageY - shiftY}px`;
+      listItem.style.width = `${itemWidth}px`;
     }
+    moveAt(event.pageX, event.pageY);
 
     /**
      * @currentDroppable потенциальный элемент для перетаскивания
@@ -74,14 +77,14 @@ export default class DragAndDrop {
     /**
      * Обработчик при движении мыши, куда и как может быть перенесена карточка
      */
-    const onMouseMove = (event) => {
-      moveAt(event.pageX, event.pageY);
+    const onMouseMove = (e) => {
+      moveAt(e.pageX, e.pageY);
 
       /**
      * @elemBelow элемент над которым курсор в данный момент
      */
       listItem.hidden = true;
-      let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+      const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
       listItem.hidden = false;
 
       if (!elemBelow) return;
@@ -105,7 +108,7 @@ export default class DragAndDrop {
       /**
      * Обработка входа и выхода курсора в зону перетаскивания
      */
-      if (currentDroppable != droppableBelow) {
+      if (currentDroppable !== droppableBelow) {
         /**
        * Не в зоне переноса
        */
@@ -135,7 +138,7 @@ export default class DragAndDrop {
           newPosition.classList.remove('hidden');
         }
       }
-    }
+    };
     /**
      * Обработчки на случай выхода курса за пределы страницы
      */
@@ -151,39 +154,38 @@ export default class DragAndDrop {
         /**
         * Зона доступного переноса не достигнута, возвращаем элемент на место
         */
-        newPosition.remove()
+        newPosition.remove();
         document.documentElement.removeAttribute('onselectstart');
         listItem.removeAttribute('style');
         listItem.classList.remove('list-item--dragged');
-        oldPosition.replaceWith(listItem)
+        oldPosition.replaceWith(listItem);
       } else {
         /**
        * Перенос прошел успешно, удаляем старую позицию карточки и заменяем новую позицию на переносимый элемент
        */
-        oldPosition.remove()
+        oldPosition.remove();
         document.documentElement.removeAttribute('onselectstart');
         listItem.removeAttribute('style');
         listItem.classList.remove('list-item--dragged');
         newPosition.replaceWith(listItem);
         this.cards.forEach((card) => {
           card.getItems();
-        })
+        });
       }
 
       document.removeEventListener('mousemove', onMouseMove);
       listItem.onmouseup = null;
     };
   }
+
   /**
    * Добавляет обработчики на карточки
    */
   addListeners(...args) {
     args.forEach((item) => {
       item.addEventListener('mousedown', this.dragAndDrop.bind(this));
-      item.ondragstart = (e) => {
-        return false;
-      }
-    })
+      item.ondragstart = () => false;
+    });
   }
   /**
   * Удаляет обработчики с карточки
@@ -191,7 +193,6 @@ export default class DragAndDrop {
   removeListeners(...args) {
     args.forEach((item) => {
       item.removeEventListener('mousedown', this.dragAndDrop.bind(this));
-    })
+    });
   }
 }
-

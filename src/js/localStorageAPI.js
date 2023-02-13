@@ -1,5 +1,5 @@
 export default class LocalStorageAPI {
-  static setItems = function (...cards) {
+  static setItems(...cards) {
     cards.forEach((card) => {
       let items = card.items.map((item) => {
         if (item.textContent !== '') {
@@ -10,7 +10,7 @@ export default class LocalStorageAPI {
       items = items.filter((e) => e !== undefined);
       localStorage.setItem(card.id, JSON.stringify(items));
     });
-  };
+  }
 
   static getItems(...cards) {
     cards.forEach((card) => {
@@ -23,7 +23,6 @@ export default class LocalStorageAPI {
         }
       } catch (error) {
         const message = document.querySelector('.message');
-        console.log(error, card.id);
         message.classList.remove('hidden');
         setTimeout(() => message.classList.add('hidden'), 7000);
         localStorage.removeItem(card.id);

@@ -4,7 +4,6 @@ export default class CardList {
   constructor(element, id) {
     this.element = element;
     this.id = id;
-    this.dragDrop;
     /**
        * Элементы формы добавления новой карточки
        */
@@ -22,7 +21,7 @@ export default class CardList {
     /**
        * Добавление всех обработчиков на карточку
        */
-    this.itemAddListeners(...this.items);
+    // this.itemAddListeners(...this.items);
     /**
        * Бинд обработчиков событий
        */
@@ -118,7 +117,6 @@ export default class CardList {
     input.value = text.textContent;
     input.setAttribute('maxlength', '250');
     text.replaceWith(input);
-    this.dragDrop.removeListeners(item);
     input.focus();
     input.onblur = () => {
       text.textContent = input.value.trim();
@@ -128,7 +126,6 @@ export default class CardList {
       LocalStorageAPI.setItems(this);
     };
   }
-
   /**
     * Удаляет карточку
     */
