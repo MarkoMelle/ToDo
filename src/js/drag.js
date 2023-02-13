@@ -187,6 +187,7 @@ export default class DragAndDrop {
       item.ondragstart = () => false;
     });
   }
+
   /**
   * Удаляет обработчики с карточки
   */

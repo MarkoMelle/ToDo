@@ -126,6 +126,7 @@ export default class CardList {
       LocalStorageAPI.setItems(this);
     };
   }
+
   /**
     * Удаляет карточку
     */
