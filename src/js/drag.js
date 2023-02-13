@@ -1,9 +1,11 @@
 
-export default class DragDrop {
+import LocalStorageAPI from "./localStorageAPI";
+
+export default class DragAndDrop {
   constructor(cards) {
     this.cards = cards;
+    this.isOutItem = false;
   }
-
   /**
    * Описывает всю логику перетаскивания карточки
    */
@@ -28,6 +30,7 @@ export default class DragDrop {
      * предполагаемого места
      */
     const oldPosition = listItem.cloneNode(true)
+    oldPosition.textContent = '';
     oldPosition.classList.add('hidden');
     listItem.parentNode.insertBefore(oldPosition, listItem);
     const newPosition = listItem.cloneNode(true)
@@ -45,6 +48,7 @@ export default class DragDrop {
     */
     listItem.classList.add('list-item--dragged');
     document.body.append(listItem);
+    oldPosition.parentNode.insertBefore(newPosition, oldPosition);
 
     moveAt(event.pageX, event.pageY);
 
@@ -64,12 +68,13 @@ export default class DragDrop {
      */
     let currentDroppable = null;
     let isDroppable = false;
+    let typeCurrent = false;
     let isItem = false;
 
     /**
      * Обработчик при движении мыши, куда и как может быть перенесена карточка
      */
-    function onMouseMove(event) {
+    const onMouseMove = (event) => {
       moveAt(event.pageX, event.pageY);
 
       /**
@@ -83,17 +88,19 @@ export default class DragDrop {
       /**
      * @droppableBelow ближайший доступный элемент от курсора
      */
-      let droppableBelow = elemBelow.closest('.list-container');
+      let droppableBelow = elemBelow.closest('.list-item') ? elemBelow.closest('.list-item') : elemBelow.closest('.list');
       /**
        * Отличаем попытку переноса в список от переноса между элементами
        */
       if (droppableBelow) {
-        droppableBelow = elemBelow.closest('.list-item') ? elemBelow.closest('.list-item') : elemBelow.closest('.list-container');
         if (droppableBelow.classList.contains('list-item')) {
-          isItem = true;
-        } else {
-          isItem = false;
+          typeCurrent = 'item';
+        } else if (droppableBelow.classList.contains('list')) {
+          typeCurrent = 'list';
         }
+      } else {
+        typeCurrent = 'container';
+        droppableBelow = elemBelow.closest('.list-container');
       }
       /**
      * Обработка входа и выхода курсора в зону перетаскивания
@@ -103,8 +110,13 @@ export default class DragDrop {
        * Не в зоне переноса
        */
         if (currentDroppable) {
+          if (currentDroppable.classList.contains('list-item')) {
+            isItem = true;
+          }
           isDroppable = false;
-          newPosition.classList.add('hidden');
+          if (currentDroppable.classList.contains('list-container')) {
+            newPosition.classList.add('hidden');
+          }
         }
         /**
          * В зоне переноса
@@ -112,40 +124,52 @@ export default class DragDrop {
         currentDroppable = droppableBelow;
         if (currentDroppable) {
           isDroppable = true;
-          newPosition.classList.remove('hidden');
-          if (isItem) {
+          if (typeCurrent === 'item') {
             droppableBelow.parentNode.insertBefore(newPosition, droppableBelow);
-          } else {
+          } else if (typeCurrent === 'list' && !isItem) {
+            droppableBelow.append(newPosition);
+          } else if (typeCurrent === 'container') {
             droppableBelow.querySelector('.list').append(newPosition);
           }
+
+          newPosition.classList.remove('hidden');
         }
       }
     }
+    /**
+     * Обработчки на случай выхода курса за пределы страницы
+     */
+
     document.addEventListener('mousemove', onMouseMove);
+
     /**
     * В обработчик завершения переноса карточки
     */
-    listItem.onmouseup = function () {
+
+    listItem.onmouseup = () => {
       if (!isDroppable) {
         /**
         * Зона доступного переноса не достигнута, возвращаем элемент на место
         */
+        newPosition.remove()
         document.documentElement.removeAttribute('onselectstart');
         listItem.removeAttribute('style');
         listItem.classList.remove('list-item--dragged');
         oldPosition.replaceWith(listItem)
       } else {
         /**
-       * Перенос прошел успешно
+       * Перенос прошел успешно, удаляем старую позицию карточки и заменяем новую позицию на переносимый элемент
        */
+        oldPosition.remove()
         document.documentElement.removeAttribute('onselectstart');
         listItem.removeAttribute('style');
         listItem.classList.remove('list-item--dragged');
         newPosition.replaceWith(listItem);
+        this.cards.forEach((card) => {
+          card.getItems();
+        })
       }
-      /**
-       * Удаляем стандартный обработчик браузера
-       */
+
       document.removeEventListener('mousemove', onMouseMove);
       listItem.onmouseup = null;
     };
@@ -155,7 +179,7 @@ export default class DragDrop {
    */
   addListeners(...args) {
     args.forEach((item) => {
-      item.addEventListener('mousedown', this.dragAndDrop);
+      item.addEventListener('mousedown', this.dragAndDrop.bind(this));
       item.ondragstart = (e) => {
         return false;
       }
@@ -166,7 +190,7 @@ export default class DragDrop {
   */
   removeListeners(...args) {
     args.forEach((item) => {
-      item.removeEventListener('mousedown', this.dragAndDrop);
+      item.removeEventListener('mousedown', this.dragAndDrop.bind(this));
     })
   }
 }
