@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 .hidden {
    display: none !important;
 }
@@ -20,18 +21,15 @@ body {
    padding: 10px;
    background-color: #fff;
    box-shadow: 13px 12px 22px 2px rgba(0, 0, 0, 0.33);
-  }
+}
 
 .widget {
    margin: auto;
    display: flex;
    flex-wrap: wrap;
-   /* /* width: 100vw; */
    height: 100vh;
    padding: 30px;
 }
-
-
 
 .lists {
    margin: 20vh auto;
@@ -65,8 +63,6 @@ body {
 .list {
    display: flex;
    flex-direction: column;
-   /* gap: 10px; */
-
 }
 
 .list-item {
@@ -83,28 +79,22 @@ body {
 .list-item:hover {
    background-color: #4A8FE7;
    color: #fff;
+   cursor: grab;
 }
 
-/* textarea.list-item__text {
-   resize: none;
-   background: red;
-   height: 100px;
-   max-height: 150px;
-} */
-
 .list-item__text {
-   -webkit-touch-callout: none; 
-   -webkit-user-select: none;  
-   -khtml-user-select: none;    
-   -moz-user-select: none;      
-   -ms-user-select: none;       
-   user-select: none;   
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
    font-family: inherit;
    font-size: inherit;
    width: 100%;
    max-width: 100%;
    word-break: break-word;
-    white-space:normal;
+   white-space: normal;
 }
 
 textarea.list-item__text {
@@ -140,7 +130,7 @@ textarea.list-item__text {
 
 .overlap:hover {
    color: transparent;
-   background-color:#d2d2d2;
+   background-color: #d2d2d2;
 }
 
 li {
@@ -152,6 +142,7 @@ li {
    min-width: 100%;
    min-height: 45px;
    height: auto;
+
    max-height: 150px;
    border: 2px solid #FF8811;
    max-width: 100%;
@@ -217,10 +208,10 @@ li {
    width: 15px;
 }
 
-.list-item:hover .delete-item{
+.list-item:hover .delete-item {
    display: block;
 }
 
-.list-item:hover .edit-item{
+.list-item:hover .edit-item {
    display: block;
 }

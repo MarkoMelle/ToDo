@@ -4,9 +4,10 @@ export default class CardList {
   constructor(element, id) {
     this.element = element;
     this.id = id;
+    this.onEdit = false;
     /**
-       * Элементы формы добавления новой карточки
-       */
+      * Элементы формы добавления новой записи
+      */
     this.openFormBtn = this.element.querySelector('.open-form');
     this.closeFormBtn = this.element.querySelector('.close-form');
     this.addForm = this.element.querySelector('.add-form');
@@ -15,16 +16,12 @@ export default class CardList {
     this.addBtn = this.element.querySelector('.add-item');
     this.input = this.element.querySelector('.input');
     /**
-       * Карточки внутри контейнера
+       * Записи внутри карточки
        */
     this.items = Array.from(this.element.querySelectorAll('.list-item'));
     /**
-       * Добавление всех обработчиков на карточку
-       */
-    // this.itemAddListeners(...this.items);
-    /**
-       * Бинд обработчиков событий
-       */
+      * Добавление всех обработчиков на карточку
+      */
     this.openFormBtn.onclick = this.openForm.bind(this);
     this.closeFormBtn.onclick = this.closeForm.bind(this);
     this.addBtn.onclick = this.addItemEvent.bind(this);
@@ -35,7 +32,7 @@ export default class CardList {
   }
 
   /**
-    * Добавляет обработчики на карточку
+    * Добавляет обработчики на запись
     */
   getItems() {
     this.items = Array.from(this.element.querySelectorAll('.list-item'));
@@ -53,7 +50,7 @@ export default class CardList {
   }
 
   /**
-    * Открывает форму добавления новой карточки
+    * Открывает форму добавления новой записи
     */
   openForm() {
     document.querySelectorAll('.add-form').forEach((form) => {
@@ -68,7 +65,7 @@ export default class CardList {
   }
 
   /**
-    * Закрывает форму добавления новой карточки
+    * Закрывает форму добавления новой записи
     */
   closeForm() {
     this.addForm.classList.add('hidden');
@@ -77,7 +74,7 @@ export default class CardList {
   }
 
   /**
-    * Добавляет новую карточку
+    * Добавляет новую запись
     */
   addItem(text) {
     const li = document.createElement('li');
@@ -107,18 +104,25 @@ export default class CardList {
   }
 
   /**
-    * Редактирует карточку
+    * Редактирует запись
     */
   editItem(e) {
     const item = e.target.closest('.list-item');
     const text = e.target.closest('.list-item').querySelector('.list-item__text');
-    const input = document.createElement('textarea');
-    input.classList = text.classList;
-    input.value = text.textContent;
-    input.setAttribute('maxlength', '250');
-    text.replaceWith(input);
-    input.focus();
+    let input;
+    if (this.onEdit === false) {
+      this.onEdit = true;
+      input = document.createElement('textarea');
+      input.classList = text.classList;
+      input.value = text.textContent;
+      input.setAttribute('maxlength', '250');
+      text.replaceWith(input);
+      input.focus();
+    }
     input.onblur = () => {
+      setTimeout(() => {
+        this.onEdit = false;
+      }, 500);
       text.textContent = input.value.trim();
       input.replaceWith(text);
       this.dragDrop.addListeners(item);
@@ -128,7 +132,7 @@ export default class CardList {
   }
 
   /**
-    * Удаляет карточку
+    * Удаляет запись
     */
   removeItem(e) {
     e.target.closest('.list-item').remove();
