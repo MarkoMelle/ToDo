@@ -4428,6 +4428,8 @@ var es_regexp_exec = __webpack_require__(4916);
 var es_function_bind = __webpack_require__(4812);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.trim.js
 var es_string_trim = __webpack_require__(3210);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.timers.js
+var web_timers = __webpack_require__(2564);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
 var es_array_filter = __webpack_require__(7327);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.to-primitive.js
@@ -4440,8 +4442,6 @@ var es_number_constructor = __webpack_require__(9653);
 var es_object_define_property = __webpack_require__(9070);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
 var es_array_map = __webpack_require__(1249);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/web.timers.js
-var web_timers = __webpack_require__(2564);
 ;// CONCATENATED MODULE: ./src/js/localStorageAPI.js
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
@@ -4535,6 +4535,7 @@ function cardList_typeof(obj) { "@babel/helpers - typeof"; return cardList_typeo
 
 
 
+
 function cardList_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function cardList_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, cardList_toPropertyKey(descriptor.key), descriptor); } }
 function cardList_createClass(Constructor, protoProps, staticProps) { if (protoProps) cardList_defineProperties(Constructor.prototype, protoProps); if (staticProps) cardList_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -4546,9 +4547,10 @@ var CardList = /*#__PURE__*/function () {
     cardList_classCallCheck(this, CardList);
     this.element = element;
     this.id = id;
+    this.onEdit = false;
     /**
-       * Элементы формы добавления новой карточки
-       */
+      * Элементы формы добавления новой записи
+      */
     this.openFormBtn = this.element.querySelector('.open-form');
     this.closeFormBtn = this.element.querySelector('.close-form');
     this.addForm = this.element.querySelector('.add-form');
@@ -4557,16 +4559,12 @@ var CardList = /*#__PURE__*/function () {
     this.addBtn = this.element.querySelector('.add-item');
     this.input = this.element.querySelector('.input');
     /**
-       * Карточки внутри контейнера
+       * Записи внутри карточки
        */
     this.items = Array.from(this.element.querySelectorAll('.list-item'));
     /**
-       * Добавление всех обработчиков на карточку
-       */
-    // this.itemAddListeners(...this.items);
-    /**
-       * Бинд обработчиков событий
-       */
+      * Добавление всех обработчиков на карточку
+      */
     this.openFormBtn.onclick = this.openForm.bind(this);
     this.closeFormBtn.onclick = this.closeForm.bind(this);
     this.addBtn.onclick = this.addItemEvent.bind(this);
@@ -4578,7 +4576,7 @@ var CardList = /*#__PURE__*/function () {
     }
 
     /**
-      * Добавляет обработчики на карточку
+      * Добавляет обработчики на запись
       */
   }, {
     key: "getItems",
@@ -4603,7 +4601,7 @@ var CardList = /*#__PURE__*/function () {
     }
 
     /**
-      * Открывает форму добавления новой карточки
+      * Открывает форму добавления новой записи
       */
   }, {
     key: "openForm",
@@ -4620,7 +4618,7 @@ var CardList = /*#__PURE__*/function () {
     }
 
     /**
-      * Закрывает форму добавления новой карточки
+      * Закрывает форму добавления новой записи
       */
   }, {
     key: "closeForm",
@@ -4631,7 +4629,7 @@ var CardList = /*#__PURE__*/function () {
     }
 
     /**
-      * Добавляет новую карточку
+      * Добавляет новую запись
       */
   }, {
     key: "addItem",
@@ -4664,7 +4662,7 @@ var CardList = /*#__PURE__*/function () {
     }
 
     /**
-      * Редактирует карточку
+      * Редактирует запись
       */
   }, {
     key: "editItem",
@@ -4672,13 +4670,20 @@ var CardList = /*#__PURE__*/function () {
       var _this2 = this;
       var item = e.target.closest('.list-item');
       var text = e.target.closest('.list-item').querySelector('.list-item__text');
-      var input = document.createElement('textarea');
-      input.classList = text.classList;
-      input.value = text.textContent;
-      input.setAttribute('maxlength', '250');
-      text.replaceWith(input);
-      input.focus();
+      var input;
+      if (this.onEdit === false) {
+        this.onEdit = true;
+        input = document.createElement('textarea');
+        input.classList = text.classList;
+        input.value = text.textContent;
+        input.setAttribute('maxlength', '250');
+        text.replaceWith(input);
+        input.focus();
+      }
       input.onblur = function () {
+        setTimeout(function () {
+          _this2.onEdit = false;
+        }, 500);
         text.textContent = input.value.trim();
         input.replaceWith(text);
         _this2.dragDrop.addListeners(item);
@@ -4688,7 +4693,7 @@ var CardList = /*#__PURE__*/function () {
     }
 
     /**
-      * Удаляет карточку
+      * Удаляет запись
       */
   }, {
     key: "removeItem",
